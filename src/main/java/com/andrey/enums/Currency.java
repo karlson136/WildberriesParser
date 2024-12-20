@@ -15,6 +15,6 @@ public enum Currency {
     RUB("Российский рубль (RUB)"),
     USD("Доллар США (USD)");
 
-    private String descr;
+    private final String descr;
 
 }

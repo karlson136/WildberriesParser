@@ -5,6 +5,7 @@
 
 package com.andrey;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -20,6 +21,7 @@ import static com.andrey.enums.Currency.RUB;
 import static com.andrey.enums.Currency.USD;
 import static com.andrey.utils.Nbrb.getCurrencyValueByDate;
 
+@Slf4j
 public class Parser {
 
 
@@ -45,6 +47,7 @@ public class Parser {
     }
 
     public void parse(String input) {
+        long start = System.currentTimeMillis();
         try {
             File inputFile = new File(this.getClass().getClassLoader().getResource(input).toURI());
             Document doc = Jsoup.parse(inputFile);
@@ -56,15 +59,17 @@ public class Parser {
                 Element brand = element.selectFirst(".archive-item__brand");
                 if (receiveDate != null) {
                     String formattedReceiveDate = formatReceiveDate(receiveDate.text());
-                    System.out.println(price.text() + "; " + receiveDate.text() + "; " + formattedReceiveDate + "; " + brand.text());
+                    log.info("{}; {}; {}; {}", price.text(), receiveDate.text(), formattedReceiveDate, brand.text());
                     parsePrice(price.text(), formattedReceiveDate);
                 }
             });
-            System.out.println(adderBy.sum());
-            System.out.println(adderRu.sum());
-            System.out.println(adderUsd.sum());
+            log.info("BY sum: {}", adderBy.sum());
+            log.info("RU sum: {}", adderRu.sum());
+            log.info("US sum: {}", adderUsd.sum());
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("An error occurs during parse wb file.", e);
+        } finally {
+            log.info("Total time taken: {} ms", System.currentTimeMillis() - start);
         }
     }
 
@@ -98,7 +103,7 @@ public class Parser {
                 adderUsd.add(priceDouble / getCurrencyValueByDate(USD, formattedReceiveDate));
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("An error occurs during parsePrice.", e);
             throw new IllegalStateException(e);
         }
     }

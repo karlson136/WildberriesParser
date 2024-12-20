@@ -7,6 +7,7 @@ package com.andrey.utils;
 
 import com.andrey.Main;
 import com.andrey.enums.Currency;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
@@ -21,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.StreamSupport;
 
+@Slf4j
 public final class Nbrb {
 
     private static final String ROOT_PATH = "/";
@@ -42,7 +44,7 @@ public final class Nbrb {
                 readNbrbYear(nbrbYear);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("An error occurs during nbrb init.", e);
             throw new IllegalArgumentException(e);
         }
     }
